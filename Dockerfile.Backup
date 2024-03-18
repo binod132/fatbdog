@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+# php:
+#     container_name: php
+#     image: laravel:latest
+# build:
+#     context: .
+#     target: php
+# volumes:
+#     -   ./:/app
+# ports:
+#     -   "8000:80"
+# networks:
+#     - app
+node:
+container_name: node
+image:  node:21-alpine
+user:   node
+working_dir: /app
+volumes:
+-   ./:/app
+command: sh -c "npm install && npm run dev"
+networks:
+- app
+depends_on:
+- php
+ports:
+-   "5173:5173"
+
+webserver:
+image: laravel-nginx:latest
+# working_dir: /app
+volumes:
+-   ./:/app
+#     -   ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+ports:
+-   "80:80"
+depends_on:
+- php
+networks:
+- app
+
+db:
+image: mysql:8.3.0
+container_name: mysql
+environment:
+MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+MYSQL_ROOT_HOST: "%"
+MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+MYSQL_DATABASE: "${DB_DATABASE}"
+MYSQL_PASSWORD: "${DB_PASSWORD}"
+ports:
+-   "3306:3306"
+volumes:
+-   mysqldata:/var/lib/mysql
+networks:
+- app
+
+phpmyadmin:
+image: phpmyadmin:5.2.1
+environment:
+PMA_ARBITRARY: 1
+ports:
+-   "8080:80"
+depends_on:
+- db
+networks:
+- app
+
+volumes:
+mysqldata:
+networks:
+app:

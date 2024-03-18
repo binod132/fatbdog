@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/y6k5k4h5
+
+  build:
+    commands:
+      - echo Building Docker Image for Flask Application
+      - docker build -t fatdog2 .
+      - echo Image built successfully
+
+  post_build:
+    commands:
+      - echo Tagging Flask Docker image
+      - docker tag fatdog2:latest public.ecr.aws/y6k5k4h5/fatdog2:latest
+      - docker push public.ecr.aws/y6k5k4h5/fatdog2:latest
