@@ -1,2 +1,2 @@
 echo "Running container..."
-sudo docker run --name flask_app -d -p 5000:5000 232048837608.dkr.ecr.us-east-1.amazonaws.com/adex-ecr:latest
+sudo docker run --name laravel -d -p 80:80 public.ecr.aws/y6k5k4h5/fatdog2:latest
